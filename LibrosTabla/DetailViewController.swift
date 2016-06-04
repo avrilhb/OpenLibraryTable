@@ -11,8 +11,16 @@ import UIKit
 class DetailViewController: UIViewController {
 
     @IBOutlet weak var detailDescriptionLabel: UILabel!
-
-
+    @IBOutlet weak var isbnLibro: UILabel!
+    @IBOutlet weak var tituloLibro: UILabel!
+    @IBOutlet weak var autoresLibro: UILabel!
+    @IBOutlet weak var portadaLibro: UIImageView!
+    
+    var isbn : String = ""
+    var titulo : String = ""
+    var autores : String = ""
+    var portada : UIImage = UIImage()
+    
     var detailItem: AnyObject? {
         didSet {
             // Update the view.
@@ -22,11 +30,15 @@ class DetailViewController: UIViewController {
 
     func configureView() {
         // Update the user interface for the detail item.
-        if let detail = self.detailItem {
+        /*if let detail = self.detailItem {
             if let label = self.detailDescriptionLabel {
                 label.text = detail.valueForKey("timeStamp")!.description
             }
-        }
+        }*/
+        self.isbnLibro.text = isbn
+        self.tituloLibro.text = titulo
+        self.autoresLibro.text = autores
+        self.portadaLibro.image = portada
     }
 
     override func viewDidLoad() {

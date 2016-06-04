@@ -10,6 +10,9 @@ import UIKit
 import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+    
+    var libro : Array<Array<String>> = Array<Array<String>>()
+    var portada : Array<UIImage> = Array<UIImage>()
 
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
@@ -18,14 +21,27 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        //self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(insertNewObject(_:)))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(MasterViewController.agregarlibro))
         self.navigationItem.rightBarButtonItem = addButton
-        if let split = self.splitViewController {
+        /*if let split = self.splitViewController {
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        }
+        }*/
+    }
+    
+    func agregarlibro()  {
+        performSegueWithIdentifier("agregar", sender: self)
+    }
+    
+    @IBAction func saveBookDetail (segue: UIStoryboardSegue){
+        if segue.identifier == "exit"{
+            print(libro[0][0] + " " + libro[0][1])
+            let indexPath = NSIndexPath(forRow: libro.count-1, inSection: 0)
+            tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            tableView.reloadData()
+                    }
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -38,7 +54,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         // Dispose of any resources that can be recreated.
     }
 
-    func insertNewObject(sender: AnyObject) {
+    /*func insertNewObject(sender: AnyObject) {
         let context = self.fetchedResultsController.managedObjectContext
         let entity = self.fetchedResultsController.fetchRequest.entity!
         let newManagedObject = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context)
@@ -57,40 +73,55 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
             abort()
         }
     }
+ */
 
     // MARK: - Segues
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow {
-            let object = self.fetchedResultsController.objectAtIndexPath(indexPath)
+            let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+            //let dt = segue.destinationViewController as! DetailViewController
+            let indexPath = self.tableView.indexPathForSelectedRow
+            controller.isbn = self.libro[indexPath!.row][1]
+            controller.titulo = self.libro[indexPath!.row][0]
+            controller.autores = self.libro[indexPath!.row][2]
+            controller.portada = self.portada[indexPath!.row]
+            
+            
+            /*if let indexPath = self.tableView.indexPathForSelectedRow {
+                //let object = self.fetchedResultsController.objectAtIndexPath(indexPath)
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
+                controller.detailItem = self.libro[indexPath.row]
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
-            }
+            }*/
         }
     }
 
     // MARK: - Table View
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.fetchedResultsController.sections?.count ?? 0
+        //return self.fetchedResultsController.sections?.count ?? 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionInfo = self.fetchedResultsController.sections![section]
-        return sectionInfo.numberOfObjects
+        //let sectionInfo = self.fetchedResultsController.sections![section]
+        //return sectionInfo.numberOfObjects
+        return libro.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
-        let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
+        /*let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
         self.configureCell(cell, withObject: object)
+        return cell*/
+        cell.textLabel?.text = self.libro[indexPath.row][0]
         return cell
     }
+}
 
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    /*override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
@@ -186,7 +217,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         self.tableView.endUpdates()
     }
 
-    /*
+    
      // Implementing the above methods to update the table view in response to individual changes may have performance implications if a large number of changes are made simultaneously. If this proves to be an issue, you can instead just implement controllerDidChangeContent: which notifies the delegate that all section and object changes have been processed.
      
      func controllerDidChangeContent(controller: NSFetchedResultsController) {
@@ -195,5 +226,5 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
      }
      */
 
-}
+
 

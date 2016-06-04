@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		522BAAC61D012A440003F6B4 /* BusquedaISBNViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 522BAAC51D012A440003F6B4 /* BusquedaISBNViewController.swift */; };
 		52E6625A1CFE887E00507996 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E662591CFE887E00507996 /* AppDelegate.swift */; };
 		52E6625D1CFE887E00507996 /* LibrosTabla.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 52E6625B1CFE887E00507996 /* LibrosTabla.xcdatamodeld */; };
 		52E6625F1CFE887E00507996 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E6625E1CFE887E00507996 /* MasterViewController.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		522BAAC51D012A440003F6B4 /* BusquedaISBNViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusquedaISBNViewController.swift; sourceTree = "<group>"; };
 		52E662561CFE887E00507996 /* LibrosTabla.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LibrosTabla.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52E662591CFE887E00507996 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52E6625C1CFE887E00507996 /* LibrosTabla.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LibrosTabla.xcdatamodel; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				52E662671CFE887E00507996 /* LaunchScreen.storyboard */,
 				52E6626A1CFE887E00507996 /* Info.plist */,
 				52E6625B1CFE887E00507996 /* LibrosTabla.xcdatamodeld */,
+				522BAAC51D012A440003F6B4 /* BusquedaISBNViewController.swift */,
 			);
 			path = LibrosTabla;
 			sourceTree = "<group>";
@@ -142,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52E6625A1CFE887E00507996 /* AppDelegate.swift in Sources */,
+				522BAAC61D012A440003F6B4 /* BusquedaISBNViewController.swift in Sources */,
 				52E6625D1CFE887E00507996 /* LibrosTabla.xcdatamodeld in Sources */,
 				52E6625F1CFE887E00507996 /* MasterViewController.swift in Sources */,
 				52E662611CFE887E00507996 /* DetailViewController.swift in Sources */,
@@ -296,6 +300,7 @@
 				52E6626F1CFE887E00507996 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
