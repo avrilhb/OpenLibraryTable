@@ -17,7 +17,28 @@ class BusquedaISBNViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var autoresLibro: UILabel!
     @IBOutlet weak var portadaLibro: UIImageView!
     
+    var contexto : NSManagedObjectContext? = nil
+    
     func sincrono(isbn:String) {
+        let libroEntidad = NSEntityDescription.entityForName("Libro", inManagedObjectContext: self.contexto!)
+        let peticion = libroEntidad?.managedObjectModel.fetchRequestFromTemplateWithName("petLibro", substitutionVariables: ["isbn":isbn])
+        do{
+            let libroEntidad2 = try self.contexto?.executeFetchRequest(peticion!)
+            if libroEntidad2?.count > 0 {
+                self.isbn.text = nil
+                
+                let alert = UIAlertController(title: "Error", message: "Este libro ya ha sigo agregado. Intente una nueva bùsqueda", preferredStyle: .Alert)
+                let cancelAction = UIAlertAction(title: "Ok", style: .Cancel, handler: nil)
+                alert.addAction(cancelAction)
+                self.presentViewController(alert, animated: true, completion: nil)
+                
+                return
+            }
+        }
+        catch{
+            
+        }
+        
         let urls = "https://openlibrary.org/api/books?jscmd=data&format=json&bibkeys=ISBN:\(isbn)"
         let url = NSURL(string: urls)
         let datos: NSData? = NSData(contentsOfURL: url!)
@@ -82,6 +103,7 @@ class BusquedaISBNViewController: UIViewController, UITextFieldDelegate {
                     
                     if portada == nil{
                         portadaLibro.hidden = true
+                        portadaLibro.image = UIImage(named: "not found")
                     }else{
                         let portadaMedium = portada!["medium"] as! NSString as String
                         
@@ -108,7 +130,6 @@ class BusquedaISBNViewController: UIViewController, UITextFieldDelegate {
     @IBAction func buscarLibro(sender: AnyObject) {
         sender.resignFirstResponder() //Desaparecer el teclado
         sincrono(isbn.text!)
-        print(isbn.text!)
     }
 
     override func viewDidLoad() {
@@ -119,6 +140,8 @@ class BusquedaISBNViewController: UIViewController, UITextFieldDelegate {
         autoresLibro.hidden = true
         portadaLibro.hidden = true
         navigationItem.rightBarButtonItem?.enabled = false
+        self.contexto = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -129,14 +152,25 @@ class BusquedaISBNViewController: UIViewController, UITextFieldDelegate {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "exit" {
             let mvc = segue.destinationViewController as! MasterViewController
-            mvc.libro.append([self.tituloLibro.text!, self.isbn.text!, self.autoresLibro.text!])
+            mvc.isbn = self.isbn.text!
+            mvc.autores = self.autoresLibro.text!
+            mvc.titulo = self.tituloLibro.text!
+            if self.portadaLibro.image != nil {
+                mvc.portada = self.portadaLibro.image!
+            }else{
+                let imgVacia : UIImage = UIImage(named: "alert")!
+                mvc.portada = imgVacia
+            
+        }
+        
+            /*mvc.libro.append([self.tituloLibro.text!, self.isbn.text!, self.autoresLibro.text!])
             if self.portadaLibro.image != nil {
                 mvc.portada.append(self.portadaLibro.image!)
             }else{
                 let imgVacia : UIImage = UIImage()
                 mvc.portada.append(imgVacia)
                 
-            }
+            }*/
         }
     }
 

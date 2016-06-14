@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class DetailViewController: UIViewController {
 
@@ -21,6 +22,9 @@ class DetailViewController: UIViewController {
     var autores : String = ""
     var portada : UIImage = UIImage()
     
+    var contexto : NSManagedObjectContext? = nil
+
+    
     var detailItem: AnyObject? {
         didSet {
             // Update the view.
@@ -34,17 +38,41 @@ class DetailViewController: UIViewController {
             if let label = self.detailDescriptionLabel {
                 label.text = detail.valueForKey("timeStamp")!.description
             }
-        }*/
+        }
         self.isbnLibro.text = isbn
         self.tituloLibro.text = titulo
         self.autoresLibro.text = autores
-        self.portadaLibro.image = portada
+        self.portadaLibro.image = portada*/
+        
+        let libroEntidad = NSEntityDescription.entityForName("Libro", inManagedObjectContext: self.contexto!)
+        let peticion = libroEntidad?.managedObjectModel.fetchRequestFromTemplateWithName("petLibro", substitutionVariables: ["isbn": isbn])
+        
+        do{
+            let libroEntidad2 = try self.contexto?.executeFetchRequest(peticion!)
+            for libroResultadoEntidad in libroEntidad2!{
+                let titulo = libroResultadoEntidad.valueForKey("titulo") as! String
+                let autores = libroResultadoEntidad.valueForKey("autores") as! String
+                let portada : UIImage? = UIImage(data: libroResultadoEntidad.valueForKey("portada") as! NSData)
+                
+                self.isbnLibro.text = isbn
+                self.tituloLibro.text = titulo
+                self.autoresLibro.text = autores
+                self.portadaLibro.image = portada
+                
+            }
+        }
+        catch {
+            
+        }
+        
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        self.contexto = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         self.configureView()
+        
     }
 
     override func didReceiveMemoryWarning() {

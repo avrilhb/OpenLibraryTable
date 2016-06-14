@@ -11,8 +11,14 @@ import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
+    var isbn : String = ""
+    var titulo : String = ""
+    var autores : String = ""
+    var portada : UIImage? = nil
+    var contexto : NSManagedObjectContext? = nil
+    
     var libro : Array<Array<String>> = Array<Array<String>>()
-    var portada : Array<UIImage> = Array<UIImage>()
+    //var portada : Array<UIImage> = Array<UIImage>()
 
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
@@ -25,6 +31,23 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(MasterViewController.agregarlibro))
         self.navigationItem.rightBarButtonItem = addButton
+        
+        self.contexto = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        
+        let libroEntidad = NSEntityDescription.entityForName("Libro", inManagedObjectContext: self.contexto!)
+        let peticion = libroEntidad?.managedObjectModel.fetchRequestTemplateForName("petLibros")
+        do {
+            let librosEntidad = try self.contexto?.executeFetchRequest(peticion!)
+            for libroEntidad2 in librosEntidad! {
+                let tituloTemp = libroEntidad2.valueForKey("titulo") as! String
+                let isbnTemp = libroEntidad2.valueForKey("isbn") as! String
+                libro.append([tituloTemp, isbnTemp])
+            }
+        }
+        catch{
+            
+        }
+        
         /*if let split = self.splitViewController {
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
@@ -37,11 +60,38 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     
     @IBAction func saveBookDetail (segue: UIStoryboardSegue){
         if segue.identifier == "exit"{
-            print(libro[0][0] + " " + libro[0][1])
+            let nuevoLibroEntidad = NSEntityDescription.insertNewObjectForEntityForName("Libro", inManagedObjectContext: self.contexto!)
+            nuevoLibroEntidad.setValue(isbn, forKey: "isbn")
+            nuevoLibroEntidad.setValue(titulo, forKey: "titulo")
+            nuevoLibroEntidad.setValue(autores, forKey: "autores")
+            nuevoLibroEntidad.setValue(UIImagePNGRepresentation(portada!), forKey: "portada")
+            
+            let libroEntidad = NSEntityDescription.entityForName("Libro", inManagedObjectContext: self.contexto!)
+            let peticion = libroEntidad?.managedObjectModel.fetchRequestTemplateForName("petLibros")
+            //nuevoLibroEntidad.setValue(portada, forKey: "portada")
+            
+            do{
+                try self.contexto?.save()
+                libro.removeAll()
+                let librosEntidad = try self.contexto?.executeFetchRequest(peticion!)
+                for libroEntidad2 in librosEntidad! {
+                    let tituloTemp = libroEntidad2.valueForKey("titulo") as! String
+                    let isbnTemp = libroEntidad2.valueForKey("isbn") as! String
+                    //let autoresTemp = libroEntidad2.valueForKey("autores") as! String
+                    libro.append([tituloTemp, isbnTemp])
+                    tableView.reloadData()
+                }
+                
+            }
+            catch {
+               
+            }
+            
+            /*print(libro[0][0] + " " + libro[0][1])
             let indexPath = NSIndexPath(forRow: libro.count-1, inSection: 0)
             tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-            tableView.reloadData()
-                    }
+            tableView.reloadData()*/
+        }
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -83,9 +133,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
             //let dt = segue.destinationViewController as! DetailViewController
             let indexPath = self.tableView.indexPathForSelectedRow
             controller.isbn = self.libro[indexPath!.row][1]
-            controller.titulo = self.libro[indexPath!.row][0]
-            controller.autores = self.libro[indexPath!.row][2]
-            controller.portada = self.portada[indexPath!.row]
+            //controller.titulo = self.libro[indexPath!.row][0]
+            //controller.autores = self.libro[indexPath!.row][2]
+            //controller.portada = self.portada[indexPath!.row]
             
             
             /*if let indexPath = self.tableView.indexPathForSelectedRow {
